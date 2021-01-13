@@ -4,6 +4,11 @@ import express from 'express';              // Import Express
 import morgan from 'morgan';                // Import Morgan
 import pkg from '../package.json';          // Import as pkg the package.json
 
+// Import routes
+import authRoutes from './routes/auth.routes';
+import userRoutes from './routes/user.routes';
+import eventRoutes from './routes/event.routes';
+
 // Initialization
 const app = express();
 
@@ -13,6 +18,11 @@ app.set('pkg', pkg);                        // Import data from package.json for
 app.use( morgan('dev') );
 app.use( express.json() );
 app.use( express.urlencoded({ extended : false }) );
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/events', eventRoutes);
 
 // GET home
 app.get('/', (req, res) => {

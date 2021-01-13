@@ -40,7 +40,7 @@ const User = sequelize.define( 'user', {
     tableName: 'user'
 } );
 
-User.belongsToMany(Role, { through: UserRoles, foreignKey: 'role_id' });
-Role.belongsToMany(User, { through: UserRoles, foreignKey: 'user_id' });
+//User.belongsToMany(Role, { through: UserRoles, foreignKey: 'role_id' });
+//Role.belongsToMany(User, { through: UserRoles, foreignKey: 'user_id' });
 
 export default User;

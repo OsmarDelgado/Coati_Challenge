@@ -1,0 +1,5 @@
+// DB Credentials
+DB_NAME = "coatichallenge"
+DB_USER = "osmar"
+DB_PWD = "Osmar,24"
+DB_HOST = "db-coati-challenge.c7pv1aw1xwps.us-east-1.rds.amazonaws.com"

@@ -1,6 +1,8 @@
 import Sequelize from 'sequelize';
 import { sequelize } from '../db/db';
 
+export const ROLES = [ "Admin", "User" ];
+
 const Role = sequelize.define( 'role', {
     id : {
         type : Sequelize.INTEGER,
@@ -11,15 +13,11 @@ const Role = sequelize.define( 'role', {
         type : Sequelize.STRING,
         allowNull: false,
         unique: true
-    },
-    user_id : {
-        type : Sequelize.STRING,
-        allowNull: false,
-    },
+    }
     
 }, {
     timestamps : true,
-    tableName: 'role'
+    tableName: 'Roles'
 } );
 
 export default Role;

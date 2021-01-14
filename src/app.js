@@ -3,6 +3,8 @@ import '@babel/polyfill';
 import express from 'express';              // Import Express
 import morgan from 'morgan';                // Import Morgan
 import pkg from '../package.json';          // Import as pkg the package.json
+import { createRoles } from "./libs/initialSetup";
+require('dotenv').config();                 // Config Enviroment variables 
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -11,6 +13,7 @@ import eventRoutes from './routes/event.routes';
 
 // Initialization
 const app = express();
+createRoles();
 
 app.set('pkg', pkg);                        // Import data from package.json for get its information
 

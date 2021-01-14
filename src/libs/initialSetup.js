@@ -8,15 +8,17 @@ export const createRoles = async () => {
 
         const values = await Promise.all( [
             Role.create( {
+                id : 1,
                 name : "Admin"
             }, {
-                fields : [ 'name' ]
+                fields : [ 'id', 'name' ]
             }),
-
+            
             Role.create( {
+                id : 2,
                 name : "User"
             }, {
-                fields : [ 'name' ]
+                fields : [ 'id', 'name' ]
             })
         ] );
 

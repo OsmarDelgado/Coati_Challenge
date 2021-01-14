@@ -11,4 +11,7 @@ router.post('/signup', [ verifySignUp.verifyUserExist, verifySignUp.verifyRoleEx
 // Sign In
 router.post('/signin', authCtrl.signIn);
 
+// Sign Out
+router.post('/signout', authCtrl.signOut);
+
 export default router;

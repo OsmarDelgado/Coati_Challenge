@@ -11,12 +11,12 @@ router.get( '/', [ authJwt.verifyToken, authJwt.isAdmin ], userCtrl.getUsers );
 router.get( '/:user_id', [ authJwt.verifyToken, authJwt.isAdmin ], userCtrl.getUserById );
 
 // Create User
-router.post( '/', [ authJwt.verifyToken, authJwt.isAdmin, verifySignUp.verifyRoleExist ], userCtrl.createUser );
+router.post( '/', [ authJwt.verifyToken, authJwt.isAdmin, verifySignUp.verifyUserExist, verifySignUp.verifyRoleExist ], userCtrl.createUser );
 
 // Update User By Id
-router.put( '/:user_id', [ authJwt.verifyToken, authJwt.isAdmin ], userCtrl.updateUser );
+router.put( '/', [ authJwt.verifyToken, authJwt.isAdmin, verifySignUp.verifyRoleExist ], userCtrl.updateUser );
 
 // Delete User By Id
-router.delete( '/:user_id', [ authJwt.verifyToken, authJwt.isAdmin ], userCtrl.deleteUser );
+router.delete( '/', [ authJwt.verifyToken, authJwt.isAdmin ], userCtrl.deleteUser );
 
 export default router;

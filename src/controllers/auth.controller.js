@@ -51,6 +51,7 @@ export const signUp = async (req, res) => {
         } );
 
         const token = jwt.sign( { id : newUser.id }, config.SECRET, {
+            algorithm: 'HS256',
             expiresIn : 1500    // 25 minutes
         } );
     
@@ -99,6 +100,7 @@ export const signIn = async (req, res) => {
         } );
 
         const token = jwt.sign( { id : user.id }, config.SECRET, {
+            algorithm: 'HS256',
             expiresIn : 1500    // 25 minutes
         } );
 
@@ -116,4 +118,8 @@ export const signIn = async (req, res) => {
         } );
     }
     
+};
+
+export const signOut = async (req, res) => {
+    res.send("Sign Out");
 };

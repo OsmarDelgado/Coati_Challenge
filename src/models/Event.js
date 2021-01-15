@@ -33,7 +33,7 @@ const Event = sequelize.define( 'event', {
     
 }, {
     timestamps : true,
-    tableName: 'event'
+    tableName: 'Events'
 } );
 
 Event.belongsTo( User, { foreignKey : 'user_id', sourceKey : 'id' } );

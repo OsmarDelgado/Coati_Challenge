@@ -164,22 +164,26 @@ export const updateUser = async (req, res) => {
             }
         } );
 
-        if( user ) {
-            const updateUser = await User.update( {
-                username,
-                first_name,
-                last_name,
-                email
-            }, {
-                attributes : [ 'username', 'first_name', 'last_name', 'email' ],
-                where : {
-                    [Op.or] : {
-                        username,
-                        email
-                    }
-                }
+        if( !user ) {
+            return res.status(404).json( {
+                message : "User not found"
             } );
         }
+
+        const updateUser = await User.update( {
+            username,
+            first_name,
+            last_name,
+            email
+        }, {
+            attributes : [ 'username', 'first_name', 'last_name', 'email' ],
+            where : {
+                [Op.or] : {
+                    username,
+                    email
+                }
+            }
+        } );
 
         const updatedUser = await User.findOne( {
             attributes : [ 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
@@ -221,26 +225,26 @@ export const deleteUser = async (req, res) => {
             }
         } );
 
-        if( user ) {    
-            const deleteUser = await User.destroy( {
-                where : {
-                    [Op.or] : {
-                        username,
-                        email
-                    }
-                }
-            } );
-            
-            res.status(201).json( {
-                message : "User deleted",
-                data : deleteUser
-            } );
-        } else {
-            res.status(404).json( {
+        if( !user ) {    
+            return res.status(404).json( {
                 message : "User is not valid",
                 data : {}
-            } );
+            } );   
         }
+
+        const deleteUser = await User.destroy( {
+            where : {
+                [Op.or] : {
+                    username,
+                    email
+                }
+            }
+        } );
+        
+        res.status(201).json( {
+            message : "User deleted",
+            data : deleteUser
+        } );
 
     } catch (error) {
         console.log(error);

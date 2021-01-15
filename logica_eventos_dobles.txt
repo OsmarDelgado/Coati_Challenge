@@ -1,0 +1,35 @@
+//Testing 
+const date1 =  new Date( '2021-01-15T10:24' );
+const date1_epoch = date1.getTime();
+console.log(date1_epoch);
+const date2 =  new Date( '2021-01-15T10:23' );
+const date2_epoch = date2.getTime();
+console.log(date2_epoch);
+
+// Testing
+const date3 =  new Date( '2021-01-15T11:15' );
+const date3_epoch = date3.getTime();
+console.log(date3_epoch);
+const date4 =  new Date( '2021-01-15T11:30' );
+const date4_epoch = date4.getTime();
+console.log(date4_epoch);
+
+//Testing
+const date5 =  new Date( '2021-01-15T11:29' );
+const date5_epoch = date5.getTime();
+console.log(date5_epoch);
+const date6 =  new Date( '2021-01-15T11:32' );
+const date6_epoch = date6.getTime();
+console.log(date6_epoch);
+
+// Logical programming
+
+if( (date5_epoch >= date3_epoch && date5_epoch <= date4_epoch) || (date6_epoch <= date4_epoch && date6_epoch >= date3_epoch) ) {
+	console.log("Event not available for schedule");
+} else if( (date5_epoch <= date3_epoch) && (date6_epoch >= date4_epoch) ) {
+	console.log("Event not available for schedule");
+} else {
+	console.log("Date and time is available");
+}
+
+// Console log

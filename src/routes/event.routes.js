@@ -4,19 +4,19 @@ import { authJwt } from "../middlewares";
 
 const router = Router();
 
-// Get all Users
+// Get all Events
 router.get( '/', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.getEvents );
 
-// Get User By Id
-router.get( '/:user_id', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.getEventByUser );
+// Get Events by Id
+router.get( '/:event_id', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.getEventById );
 
-// Create User
+// Create Event
 router.post( '/', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.createEvent );
 
-// Update User By Id
+// Update Event By Id
 router.put( '/:event_id', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.updateEvent );
 
-// Delete User By Id
+// Delete Event By Id
 router.delete( '/:event_id', [ authJwt.verifyToken, authJwt.isUser ], eventCtrl.deleteEvent );
 
 export default router;

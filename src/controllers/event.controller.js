@@ -27,14 +27,14 @@ export const getEvents = async (req, res) => {
             } );
         }
 
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "Events",
             data : events
         } );
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }
@@ -68,14 +68,14 @@ export const getEventById = async (req, res) => {
             } );
         }
 
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "Event",
             data : event
         } );
         
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }
@@ -148,7 +148,6 @@ export const createEvent = async (req, res) => {
                     data : {}
                 } );
             }
-            
         }
 
     } catch (error) {
@@ -229,14 +228,14 @@ export const updateEvent = async (req, res) => {
             }
         } );
 
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "Event updated",
             data : updatedEvent
         } );
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }
@@ -270,14 +269,14 @@ export const deleteEvent = async (req, res) => {
             }
         } );
 
-        res.status(201).json( {
+        return res.status(201).json( {
             message : "Event deleted",
             data : deleteEvent
         } );
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }

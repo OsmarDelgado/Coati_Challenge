@@ -61,7 +61,7 @@ export const signUp = async (req, res) => {
             expiresIn : 1500    // 25 minutes
         } );
     
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "User created succesfuly",
             data : {
                 newUser,
@@ -72,9 +72,8 @@ export const signUp = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
-            message : "Internal Server Error",
-            data : {}
+        return res.status(500).json( {
+            message : "Internal Server Error"
         } );
     }
 };
@@ -116,17 +115,15 @@ export const signIn = async (req, res) => {
             expiresIn : 1500    // 25 minutes
         } );
 
-        res.json( {
+        return res.json( {
             message : "Sign In",
             token
         } );
 
     } catch (error) {
         console.log(error);
-        
-        res.status(500).json( {
-            message : "Internal Server Error",
-            data : {}
+        return res.status(500).json( {
+            message : "Internal Server Error"
         } );
     }
     

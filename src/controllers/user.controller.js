@@ -16,7 +16,7 @@ export const getUsers = async (req, res) => {
         } );
 
         // for( let i in users) {
-        //     const userRoles = await UserRoles.findAll( {
+        //     const userRoles = await UserRoles.findOne( {
         //         where : {
         //             user_id : users[i].id
         //         }
@@ -26,12 +26,12 @@ export const getUsers = async (req, res) => {
 
         // If not exists users return a 404
         if( !users ) {
-            res.status(404).json( {
+            return res.status(404).json( {
                 message : "There are not Users yet"
             } );
         }
 
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "Users",
             data : {
                 users,
@@ -41,9 +41,8 @@ export const getUsers = async (req, res) => {
 
     } catch (error) {
         console.log( error );
-        res.status(500).json( {
-            message : "Internal Server Error",
-            data : {}
+        return res.status(500).json( {
+            message : "Internal Server Error"
         } );
     }
 };
@@ -52,34 +51,41 @@ export const getUserById = async (req, res) => {
     // Get user_id from the params
     const { user_id } = req.params;
 
-    // Get all UserRoles belongs the User
-    const userRoles = await UserRoles.findAll( {
-        attributes : [ 'id', 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
-    }, {
-        where : {
-            user_id
-        }
-    } );
+    try {
+        // Get all UserRoles belongs the User
+        const userRoles = await UserRoles.findAll( {
+            attributes : [ 'id', 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
+        }, {
+            where : {
+                user_id
+            }
+        } );
 
-    // Find the single user
-    const user = await User.findOne( {
-        where : {
-            id : user_id
+        // Find the single user
+        const user = await User.findOne( {
+            where : {
+                id : user_id
+            }
+        } );
+        
+        if( !user ) {
+            return res.status(404).json( {
+                message : "User does not exist",
+                data : {}
+            } );
         }
-    } );
-    
-    if( user != null ) {
-        res.status(200).json( {
+
+        return res.status(200).json( {
             message : "User",
             data : {
                 user,
                 roles : userRoles
             }
         } );
-    } else {
-        res.status(404).json( {
-            message : "User does not exist",
-            data : {}
+    } catch (error) {
+        console.log( error );
+        return res.status(500).json( {
+            message : "Internal Server Error"
         } );
     }
 };
@@ -89,6 +95,13 @@ export const createUser = async (req, res) => {
     const { username, first_name, last_name, email, password, roles } = req.body;
 
     try {
+        // If username, email or password are not provided, request their
+        if( username == '' || email == '' || password == '' ) {
+            return res.status(400).json( {
+                message : "Data missing"
+            } );
+        }
+        
         // Create the new user
         const newUser = await User.create( {
             username,
@@ -139,7 +152,7 @@ export const createUser = async (req, res) => {
             expiresIn : 1500    // 25 minutes
         } );
     
-        res.status(200).json( {
+        return res.status(200).json( {
             message : "User created succesfuly",
             data : {
                 newUser,
@@ -150,10 +163,8 @@ export const createUser = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-
-        res.status(500).json( {
-            message : "Internal Server Error",
-            data : {}
+        return res.status(500).json( {
+            message : "Internal Server Error"
         } );
     }
 };
@@ -163,21 +174,45 @@ export const updateUser = async (req, res) => {
     const { username, first_name, last_name, email, password, roles } = req.body;
 
     try {
+        // If username, email or password are not provided, request their
+        if( username == '' || email == '' || password == '' ) {
+            return res.status(400).json( {
+                message : "Data missing"
+            } );
+        }
+        
         // Search the user with its username and/ or email
         const user = await User.findOne( {
-            attributes : [ 'username', 'email' ]
-        }, {
+            where : {
+                    [Op.or] : {
+                        username,
+                        email
+                    }
+                }
+            }
+        );
+
+        // Return if user does not exist
+        if( !user ) {
+            return res.status(404).json( {
+                message : "User not found"
+            } );
+        }
+
+        // If exist then search if is not an other user has the username or email
+        const userExist = await User.findOne( {
             where : {
                 [Op.or] : {
-                    username,
-                    email
+                    username : user.username,
+                    email : user.email
                 }
             }
         } );
 
-        if( !user ) {
-            return res.status(404).json( {
-                message : "User not found"
+        // If exist another user using the username or email return an error
+        if ( userExist ) {
+            return res.status(409).json( {
+                message : "Username or email exist"
             } );
         }
 
@@ -197,27 +232,27 @@ export const updateUser = async (req, res) => {
             }
         } );
 
-        // const updatedUser = await User.findOne( {
-        //     attributes : [ 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
-        // }, {
-        //     where : {
-        //         [Op.or] : {
-        //             username,
-        //             email
-        //         }
-        //     }
-        // } );
+        const updatedUser = await User.findOne( {
+            attributes : [ 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
+        }, {
+            where : {
+                [Op.or] : {
+                    username,
+                    email
+                }
+            }
+        } );
 
         // console.log(updatedUser);
 
-        res.status(204).json( {
+        return res.status(204).json( {
             message : "User updated",
             data : updatedUser
         } );
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }
@@ -255,14 +290,14 @@ export const deleteUser = async (req, res) => {
             }
         } );
         
-        res.status(201).json( {
+        return res.status(201).json( {
             message : "User deleted",
             data : deleteUser
         } );
 
     } catch (error) {
         console.log(error);
-        res.status(500).json( {
+        return res.status(500).json( {
             message : "Internal Server Error"
         } );
     }

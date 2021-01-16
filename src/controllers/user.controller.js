@@ -9,8 +9,8 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 export const getUsers = async (req, res) => {
-    // res.send("Get Users");
     try {
+        // Find all users
         const users = await User.findAll( {
             attributes : [ 'id', 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
         } );
@@ -24,7 +24,8 @@ export const getUsers = async (req, res) => {
         //     console.log(userRoles.role_id);
         // }
 
-        if( users == '' ) {
+        // If not exists users return a 404
+        if( !users ) {
             res.status(404).json( {
                 message : "There are not Users yet"
             } );
@@ -48,9 +49,10 @@ export const getUsers = async (req, res) => {
 };
 
 export const getUserById = async (req, res) => {
-    // res.send("Get User By Id");
+    // Get user_id from the params
     const { user_id } = req.params;
 
+    // Get all UserRoles belongs the User
     const userRoles = await UserRoles.findAll( {
         attributes : [ 'id', 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
     }, {
@@ -59,6 +61,7 @@ export const getUserById = async (req, res) => {
         }
     } );
 
+    // Find the single user
     const user = await User.findOne( {
         where : {
             id : user_id
@@ -82,10 +85,11 @@ export const getUserById = async (req, res) => {
 };
 
 export const createUser = async (req, res) => {
-    // res.send("Create User");
+    // Get info from the body
     const { username, first_name, last_name, email, password, roles } = req.body;
 
     try {
+        // Create the new user
         const newUser = await User.create( {
             username,
             first_name,
@@ -96,9 +100,12 @@ export const createUser = async (req, res) => {
             fields : [ 'username', 'first_name', 'last_name', 'email', 'password' ]
         } );
 
+        // Verify if the roles were provider from the body
         if( roles ) {
+            // Loop for get the id for the role
             const roles_id = roles.map( (id_obj) => { return id_obj.id } );
 
+            // Create and assign the role to the user in the table UserRoles
             for(let i in roles_id) {
                 const newUserRoles = await UserRoles.create( {
                     user_id : newUser.id,
@@ -107,6 +114,7 @@ export const createUser = async (req, res) => {
             }
 
         } else {
+            // If not roles provider then assign the role User to the new User
             const role = await Role.findOne( {
                 where : {
                     name : "User"
@@ -118,12 +126,14 @@ export const createUser = async (req, res) => {
             } );
         }
 
+        // Verify the roles for the new User
         const userRolesCreated = await UserRoles.findAll( {
             where : {
                 user_id : newUser.id
             }
         } );
 
+        // Generate the JWT
         const token = jwt.sign( { id : newUser.id }, config.SECRET, {
             algorithm: 'HS256',
             expiresIn : 1500    // 25 minutes
@@ -149,10 +159,11 @@ export const createUser = async (req, res) => {
 };
 
 export const updateUser = async (req, res) => {
-    // res.send("Update User");
+    // Get info from body
     const { username, first_name, last_name, email, password, roles } = req.body;
 
     try {
+        // Search the user with its username and/ or email
         const user = await User.findOne( {
             attributes : [ 'username', 'email' ]
         }, {
@@ -170,6 +181,7 @@ export const updateUser = async (req, res) => {
             } );
         }
 
+        // Update the user if exist
         const updateUser = await User.update( {
             username,
             first_name,
@@ -185,20 +197,20 @@ export const updateUser = async (req, res) => {
             }
         } );
 
-        const updatedUser = await User.findOne( {
-            attributes : [ 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
-        }, {
-            where : {
-                [Op.or] : {
-                    username,
-                    email
-                }
-            }
-        } );
+        // const updatedUser = await User.findOne( {
+        //     attributes : [ 'username', 'first_name', 'last_name', 'email', 'auth_token' ]
+        // }, {
+        //     where : {
+        //         [Op.or] : {
+        //             username,
+        //             email
+        //         }
+        //     }
+        // } );
 
-        console.log(updatedUser);
+        // console.log(updatedUser);
 
-        res.status(200).json( {
+        res.status(204).json( {
             message : "User updated",
             data : updatedUser
         } );
@@ -212,10 +224,11 @@ export const updateUser = async (req, res) => {
 };
 
 export const deleteUser = async (req, res) => {
-    // res.send("Delete User");
+    // Get info from body
     const { username, email } = req.body;
 
     try {
+        // Find the user
         const user = await User.findOne( {
             where : {
                 [Op.or] : {
@@ -232,6 +245,7 @@ export const deleteUser = async (req, res) => {
             } );   
         }
 
+        // Delete user
         const deleteUser = await User.destroy( {
             where : {
                 [Op.or] : {

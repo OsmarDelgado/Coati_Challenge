@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import { sequelize } from '../db/db';
 
+// Define model for User
 const User = sequelize.define( 'user', {
     id : {
         type : Sequelize.INTEGER,

@@ -5,19 +5,22 @@ import config from '../auth.config';
 const jwt = require('jsonwebtoken');
 
 export const getEvents = async (req, res) => {
-    // res.send("Get Events");
     try {
+        // Get token from headers
         const token = req.headers["x-access-token"];
 
+        // Decode JWT  with the SECRET phrase
         const decoded = jwt.verify( token, config.SECRET );
         req.userId = decoded.id;
 
+        // Find user events 
         const events = await Event.findAll( {
             where : {
                 user_id : req.userId
             }
         } );
 
+        // If not exist then return a 404
         if( events == '' ) {
             return res.status(404).json( {
                 message : "There are not events yet"
@@ -39,22 +42,26 @@ export const getEvents = async (req, res) => {
 };
 
 export const getEventById = async (req, res) => {
-    // res.send("Get Event By User");
+    // Get event_id from the params
     const { event_id } = req.params;
+
     try {
+        // Get the event
         const event = await Event.findOne( {
             where : {
                 user_id : req.userId,
                 id : event_id
             }
         } );
-
+        
+        // If not exist then resturn a 404
         if( event == '' ) {
             return res.status(404).json( {
                 message : "There are not events yet"
             } );
         }
 
+        // If the event does not belongs to user
         if( !event ) {
             return res.status(404).json( {
                 message : "Event does not exist in your schedule"
@@ -75,29 +82,34 @@ export const getEventById = async (req, res) => {
 };
 
 export const createEvent = async (req, res) => {
-    // res.send("Create Event");
+    // Get info from the body
     const { title, description, location, start_date, end_date } = req.body;
 
+    // Create date with class Date
     const get_start_date = new Date(start_date);
     const get_end_date = new Date(end_date);
 
     try {
+        // If title, start date or end date are not provided, request their
         if( title == '' || start_date == '' || end_date == '' ) {
             return res.status(400).json( {
                 message : "Data missing"
             } );
         }
 
+        // Find all user events 
         const events = await Event.findAll( {
             where : {
                 user_id : req.userId
             }
         } );
 
+        // Loop all events for get the id
         const event = events.map( (id_obj) => {
             return id_obj.id;
         } );
 
+        // Loop event and find the single event
         for( let i in event ) {
             const date_event = await Event.findOne( {
                 where : {
@@ -105,6 +117,7 @@ export const createEvent = async (req, res) => {
                 }
             } );
             
+            // Verify if the date exist and if exist or an event has the date does not create the new event
             if( (get_start_date >= date_event.start_date && get_start_date <= date_event.end_date) || (get_end_date <= date_event.end_date && get_end_date >= date_event.start_date) ) {
                 return res.status(400).json( {
                     message : "Event not available at this time for you schedule"
@@ -117,6 +130,8 @@ export const createEvent = async (req, res) => {
 
             } else {
                 console.log("Date and time is available");
+
+                // Create the new event
                 const newEvent = await Event.create( {
                     title,
                     description,
@@ -145,20 +160,23 @@ export const createEvent = async (req, res) => {
 };
 
 export const updateEvent = async (req, res) => {
-    // res.send("Update Event");
+    // Get info from the params and the body
     const { event_id } = req.params;
     const { title, description, location, start_date, end_date } = req.body;
 
+    // Create date with class Date
     const get_start_date = new Date(start_date);
     const get_end_date = new Date(end_date);
 
     try {
+        // If title, start date or end date are not provided, request their
         if( title == '' || start_date == '' || end_date == '' ) {
             return res.status(400).json( {
                 message : "Data missing"
             } );
         }
 
+        // Find the event with the id
         const event = await Event.findOne( {
             where : {
                 id : event_id,
@@ -166,12 +184,14 @@ export const updateEvent = async (req, res) => {
             }
         } );
 
+        // If event not match
         if( !event ) {
             return res.status(404).json( {
                 message : "No event found to update"
             } );
         }
 
+        // Verify if the date exist and if exist or an event has the date does not create the new event
         if( (get_start_date >= event.start_date && get_start_date <= event.end_date) || (get_end_date <= event.end_date && get_end_date >= event.start_date) ) {
             return res.status(400).json( {
                 message : "Event not available at this time for you schedule"
@@ -184,6 +204,8 @@ export const updateEvent = async (req, res) => {
 
         } else {
             console.log("Date and time is available");
+            
+            // Update the event
             const updateEvent = await Event.update( {
                 title,
                 description,
@@ -199,14 +221,13 @@ export const updateEvent = async (req, res) => {
             } );
         }
 
+        // Find the event updated
         const updatedEvent = await Event.findOne( {
             where : {
                 user_id : req.userId,
                 id : event_id
             }
         } );
-
-        console.log( updatedEvent );
 
         res.status(200).json( {
             message : "Event updated",
@@ -222,10 +243,11 @@ export const updateEvent = async (req, res) => {
 };
 
 export const deleteEvent = async (req, res) => {
-    // res.send("Delete Event");
+    // Get info from the params
     const { event_id } = req.params;
 
     try {
+        // Find the event to delete
         const event = await Event.findOne( {
             where : {
                 id : event_id,
@@ -233,12 +255,14 @@ export const deleteEvent = async (req, res) => {
             }
         } );
     
+        // If event does not 
         if( !event ) {
             return res.status(404).json( {
                 message : "No event found to delete "
             } );
         }
 
+        // Delete the event
         const deleteEvent = await Event.destroy( {
             where : {
                 id : event_id,

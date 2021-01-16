@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as userCtrl from '../controllers/user.controller';
 import { authJwt, verifySignUp } from "../middlewares";
 
+// Initialize router
 const router = Router();
 
 // Get all Users

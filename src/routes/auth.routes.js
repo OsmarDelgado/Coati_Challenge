@@ -3,6 +3,7 @@ import * as authCtrl from '../controllers/auth.controller';
 
 import { verifySignUp } from "../middlewares";
 
+// Initialize router
 const router = Router();
 
 // Sign Up

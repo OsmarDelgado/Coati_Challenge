@@ -1,7 +1,8 @@
 import Sequelize from 'sequelize';
 import { sequelize } from '../db/db';
-import User from './User'
+import User from './User';
 
+// Define model for Event
 const Event = sequelize.define( 'event', {
     id : {
         type : Sequelize.INTEGER,
@@ -36,6 +37,7 @@ const Event = sequelize.define( 'event', {
     tableName: 'Events'
 } );
 
+// Define associations
 Event.belongsTo( User, { foreignKey : 'user_id', sourceKey : 'id' } );
 User.hasMany( Event, { foreignKey : 'user_id', sourceKey : 'id' } );
 

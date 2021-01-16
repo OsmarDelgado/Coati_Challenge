@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as eventCtrl from '../controllers/event.controller';
 import { authJwt } from "../middlewares";
 
+// Initialize router
 const router = Router();
 
 // Get all Events

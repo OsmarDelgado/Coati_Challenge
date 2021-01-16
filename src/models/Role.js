@@ -1,8 +1,7 @@
 import Sequelize from 'sequelize';
 import { sequelize } from '../db/db';
 
-export const ROLES = [ "Admin", "User" ];
-
+// Define model for Roles
 const Role = sequelize.define( 'role', {
     id : {
         type : Sequelize.INTEGER,

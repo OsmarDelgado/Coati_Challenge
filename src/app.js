@@ -1,26 +1,26 @@
 // IMPORTS PACKAGES
-import '@babel/polyfill';
-import express from 'express';              // Import Express
-import morgan from 'morgan';                // Import Morgan
-import pkg from '../package.json';          // Import as pkg the package.json
-import { createRoles } from "./libs/initialSetup";
-require('dotenv').config();                 // Config Enviroment variables 
+import '@babel/polyfill';                               // Import Polyfill
+import express from 'express';                          // Import Express
+import morgan from 'morgan';                            // Import Morgan
+import pkg from '../package.json';                      // Import as pkg the package.json
+import { createRoles } from "./libs/initialSetup";      // Import for initial setup (Roles: Admin and User)
+require('dotenv').config();                             // Config Enviroment variables 
 
 // Import routes
-import authRoutes from './routes/auth.routes';
-import userRoutes from './routes/user.routes';
-import eventRoutes from './routes/event.routes';
+import authRoutes from './routes/auth.routes';          // Import routes for auth (sign in and sign up)
+import userRoutes from './routes/user.routes';          // Import routes for CRUD users (for Admin roles)
+import eventRoutes from './routes/event.routes';        // Import routes for CRUD events (all users)
 
 // Initialization
 const app = express();
-createRoles();
+createRoles();                                          // Create Admin and User roles for the first run
 
-app.set('pkg', pkg);                        // Import data from package.json for get its information
+app.set('pkg', pkg);                                    // Import data from package.json for get its information
 
 // MIDDLEWARES
-app.use( morgan('dev') );
-app.use( express.json() );
-app.use( express.urlencoded({ extended : false }) );
+app.use( morgan('dev') );                               // Initial morgan
+app.use( express.json() );                              // Config app for undestand json
+app.use( express.urlencoded({ extended : false }) );    // For recive simple data 
 
 // Routes
 app.use('/api/auth', authRoutes);

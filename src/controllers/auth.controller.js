@@ -8,10 +8,13 @@ const { Op } = require("sequelize");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
+// Function for Sign Up
 export const signUp = async (req, res) => {
+    // Get info from the request body
     const { username, first_name, last_name, email, password, roles } = req.body;
 
     try {
+        // Create new User
         const newUser = await User.create( {
             username,
             first_name,
@@ -22,6 +25,7 @@ export const signUp = async (req, res) => {
             fields : [ 'username', 'first_name', 'last_name', 'email', 'password' ]
         } );
 
+        // Verify if roles had provided and if not in the new User put User Role
         if( roles ) {
             const roles_id = roles.map( (id_obj) => { return id_obj.id } );
 
@@ -44,12 +48,14 @@ export const signUp = async (req, res) => {
             } );
         }
 
+        // Search the UserRole in the new User
         const userRolesCreated = await UserRoles.findAll( {
             where : {
                 user_id : newUser.id
             }
         } );
 
+        // Create JWT for the new User, expired in 25 minutes
         const token = jwt.sign( { id : newUser.id }, config.SECRET, {
             algorithm: 'HS256',
             expiresIn : 1500    // 25 minutes
@@ -66,7 +72,6 @@ export const signUp = async (req, res) => {
 
     } catch (error) {
         console.log(error);
-
         res.status(500).json( {
             message : "Internal Server Error",
             data : {}
@@ -75,9 +80,11 @@ export const signUp = async (req, res) => {
 };
 
 export const signIn = async (req, res) => {
+    // Get info from request body
     const { username, email, password } = req.body;
 
     try {
+        // Find user where username or email
         const user = await User.findOne( {
             where : {
                 [Op.or] : {
@@ -87,18 +94,23 @@ export const signIn = async (req, res) => {
             }
         } );
 
+        // If user is not found response with 400
         if( !user ) return res.status(400).json( { message : "User not found" } );
 
+        // If user is found, compare password provided with password in the db
         const matchPassword = await bcrypt.compare( password, user.password );
 
+        // If password does not match then response 401
         if( !matchPassword ) return res.status(401).json( {message : "Password is incorrect", token : null} );
 
+        // Find the roles for user
         const userRoles = await UserRoles.findAll( {
             where : {
                 user_id : user.id
             }
         } );
 
+        // Create JWT for the new User, expired in 25 minutes 
         const token = jwt.sign( { id : user.id }, config.SECRET, {
             algorithm: 'HS256',
             expiresIn : 1500    // 25 minutes

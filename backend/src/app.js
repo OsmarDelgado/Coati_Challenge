@@ -1,6 +1,7 @@
 // IMPORTS PACKAGES
 import '@babel/polyfill';                               // Import Polyfill
 import express from 'express';                          // Import Express
+import cors from 'cors';                                // Import Cors
 import morgan from 'morgan';                            // Import Morgan
 import pkg from '../package.json';                      // Import as pkg the package.json
 import { createRoles } from "./libs/initialSetup";      // Import for initial setup (Roles: Admin and User)
@@ -19,6 +20,7 @@ app.set('pkg', pkg);                                    // Import data from pack
 
 // MIDDLEWARES
 app.use( morgan('dev') );                               // Initial morgan
+app.use( cors() );                                      // Initial cors
 app.use( express.json() );                              // Config app for undestand json
 app.use( express.urlencoded({ extended : false }) );    // For recive simple data 
 

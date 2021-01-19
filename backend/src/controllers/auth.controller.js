@@ -80,16 +80,13 @@ export const signUp = async (req, res) => {
 
 export const signIn = async (req, res) => {
     // Get info from request body
-    const { username, email, password } = req.body;
+    const { email, password } = req.body;
 
     try {
         // Find user where username or email
         const user = await User.findOne( {
             where : {
-                [Op.or] : {
-                    username,
-                    email
-                }
+                email
             }
         } );
 
